@@ -10,7 +10,7 @@ OUT_DIR="/mydata/data"
 # Usage.
 usage()
 {
-    echo "usage: exec.sh [--machines MACHINE_LIST] [--user USER] [--key PRIVATE_KEY] [--inp INPUT_FILE] [--out DESTINATION_DIR][-h | --help]"
+    echo "usage: exec.sh [--machines MACHINE_LIST] [--user USER] [--key PRIVATE_KEY] [--inp INPUT_FILE] [--out DESTINATION_DIR] [-h | --help]"
 }
 
 # Read input parameters.
@@ -32,7 +32,7 @@ while [ "$1" != "" ]; do
         	shift
         	INPUT=$1
         	;;
-        --inp)
+        --out)
         	shift
         	OUT_DIR=$1
         	;;
