@@ -1,28 +1,39 @@
 #!/usr/bin/env Rscript
 
+# Loading the input arguments.
+args = commandArgs(TRUE)
+
 # Loading the "parallel" package to enable parallel computation.
 library(parallel)
 
-# Loading the "bnlearn" package to learn the structure of a Bayesian network.
-library(bnlearn)
+# Obtaining the paths from the input.
+lib_dir = args[1]
+data_file = args[3]
 
-# Loading the input arguments.
-args = commandArgs(trailingOnly=TRUE)
+# Loading the "bnlearn" package to learn the structure of a Bayesian network.
+library(bnlearn, lib.loc = lib_dir)
 
 # Initializing the cluster.
-cl = makeCluster(readLines(args[0]), type = "PSOCK")
+cl = makeCluster(readLines(args[2]), type = "PSOCK")
 
-# Loading the "bnlearn" package onto the cluster nodes.
-invisible(clusterEvalQ(cl, library(bnlearn)))
+# Exporting the paths.
+clusterExport(cl, "lib_dir")
+clusterExport(cl, "data_file")
+
+#Loading the "bnlearn" package onto the cluster nodes.
+invisible(clusterEvalQ(cl, library(bnlearn, lib.loc = lib_dir)))
 
 # Learning the network structure on each split.
 models = parLapply(cl, seq(length(cl)), function(...) {
-  data = read.csv(args[1], header = TRUE)
+  data = read.csv(data_file, header = TRUE)
   hc(data, score="k2")
 })
 
-# Averaging the networks
-strength = custom.strength(models, c("A", "B", "C", "D", "E", "F"))
+# Obtaining the nodes from the header.
+nodes = unlist(strsplit(gsub("[\r\n]", "", args[4]), split=","))
+
+# # Averaging the networks
+strength = custom.strength(models, nodes)
 dag = averaged.network(strength)
 dag = cextend(dag)
 

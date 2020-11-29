@@ -5,7 +5,7 @@ MACHINES="conf/machine_list.txt"
 USER="arung"
 KEY="~/.ssh/id_rsa"
 INPUT="data/Sample_Data.csv"
-DATA_DIR="/mydata/data"
+DATA_DIR="/mydata"
 
 # Constants.
 R_LIB="/usr/local/lib/R/site-library"
@@ -36,7 +36,7 @@ while [ "$1" != "" ]; do
         	shift
         	INPUT=$1
         	;;
-        --out)
+        --data)
         	shift
         	DATA_DIR=$1
         	;;
@@ -55,7 +55,7 @@ done
 no_of_nodes=$(cat ${MACHINES} | wc -l)
 
 # Splitting the input data based on the no of nodes. (Note that, if the number of nodes is >=100, increment argument a)
-tail -n +2 ${INPUT} | split -da 1 -l $[ $(wc -l ${INPUT} | cut -d" " -f1) / ${no_of_nodes} ]  - --filter='sh -c "{ head -n1 ${INPUT}; cat; } > $FILE"'
+tail -n +2 ${INPUT} | split -da 1 -l $[ $(wc -l ${INPUT} | cut -d" " -f1) / ${no_of_nodes} ]  - --filter='sh -c "{ head -n1 '${INPUT}'; cat; } > $FILE"'
 
 # Initialization of the file counter.
 i=0
@@ -63,11 +63,11 @@ i=0
 # Iterating over all the machines.
 for machine in $(cat ${MACHINES})
 do
-  # Downloading the bnlearn package
-  ssh -o "StrictHostKeyChecking no" -i ${KEY} x${i} ${USER}@${machine} "wget ${BNLEARN_PACKAGE} -O ${DATA_DIR}/bnlearn_latest.tar.gz"
-
-  # Installing the bnlearn package.
-  ssh -o "StrictHostKeyChecking no" -i ${KEY} x${i} ${USER}@${machine} "R CMD INSTALL -l ${DATA_DIR} ${DATA_DIR}/bnlearn_latest.tar.gz"
+#  # Downloading the bnlearn package
+#  ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "wget ${BNLEARN_PACKAGE} -O ${DATA_DIR}/bnlearn_latest.tar.gz"
+#
+#  # Installing the bnlearn package.
+#  ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "R CMD INSTALL -l ${DATA_DIR} ${DATA_DIR}/bnlearn_latest.tar.gz"
 
   # Copying the splits to the nodes.
   scp -o "StrictHostKeyChecking no" -i ${KEY} x${i} ${USER}@${machine}:${DATA_DIR}/data.csv
@@ -75,6 +75,7 @@ do
 done
 
 # Executing the parallen bnlearn script.
+./learn.R ${DATA_DIR} ${MACHINES} ${DATA_DIR}/data.csv $(head -n1 ${INPUT})
 
 # Deleting the splits.
-rm -rf $(dirname ${INPUT})/x*
+rm -rvf x*
