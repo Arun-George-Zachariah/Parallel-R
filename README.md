@@ -1,9 +1,16 @@
 # Parallel-R
-Through this project, we set up a distributed R cluster, leveraging the parallel package. The parallel package offers support for parallel computation by forking parallel process (based on the multicore package) on the same machine thus utilizing most of the cores of the machine. In addition to it, the package also offers communication using sockets (obtained from the snow package) parallelizing the computation utlizing the resources of the nodes in the cluster.
+Through this project, we set up a distributed R cluster, leveraging the parallel package. The [parallel](https://www.rdocumentation.org/packages/parallel/versions/3.6.2) package offers support for parallel computation by forking parallel process (based on the [multicore](https://cran.r-project.org/src/contrib/Archive/multicore/) package) on the same machine thus utilizing most of the cores of the machine. In addition to it, the package also offers communication using sockets (obtained from the [snow](https://cran.r-project.org/web/packages/snow/index.html) package) parallelizing the computation utlizing the resources of the nodes in the cluster.
 
-We then study Bayesian structure learning, by learning the Bayesian structure on a sample dataset, using the bnlearn pacakge. The dataset is split into equal parts, based on the number of nodes in the cluster. A network structure is learnt over each split paralelly and aggregated to output the final structure.
+We then study Bayesian structure learning, by learning the Bayesian structure on a sample dataset, using the [bnlearn](https://www.bnlearn.com/) package. The dataset is split into equal parts, based on the number of nodes in the cluster. A network structure is learnt over each split paralelly and aggregated to output the final structure.
 
-## Setup
+## Dataset
+The sample data used is obtained from [learning.test](https://www.bnlearn.com/documentation/man/learning-test.html) a small synthetic dataset compirsing of 6 nodes, 5 arcs and 41 parameters.
+<p align="center">
+  <img src="data/Sample_Network.png" />
+</p>
+<p align="center">Fig. 1 - <i>learning.test</i> Network (Ref: https://www.bnlearn.com/documentation/networks/)</p>
+
+## Execution
 * To setup a distributed R cluster
     ```
     cd scripts && ./configure.sh --machines <MACHINES> --user <USERNAME> --key <PRIVATE_KEY>
@@ -78,8 +85,8 @@ We then study Bayesian structure learning, by learning the Bayesian structure on
     ./exec.sh --machines conf/machine_list.txt --user arung --key ~/.ssh/id_rsa --inp data/Sample_Data.csv --data /mydata
     ```
 
-References
-* https://www.bnlearn.com/about/slides/slides-aist17.pdf
-* https://www.rdocumentation.org/packages/parallel/versions/3.6.2
-* https://www.bnlearn.com/documentation/man/learning-test.html
-* https://www.bnlearn.com/documentation/networks/
+## References
+* [Learning Bayesian Networks 10 Years Later - Marco Scutari](https://www.bnlearn.com/about/slides/slides-aist17.pdf)
+* [Parallel Package](https://www.rdocumentation.org/packages/parallel/versions/3.6.2)
+* [Sample Data](https://www.bnlearn.com/documentation/man/learning-test.html)
+* [Example Networks](https://www.bnlearn.com/documentation/networks/)
