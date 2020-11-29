@@ -31,6 +31,7 @@ We then study Bayesian structure learning, by learning the Bayesian structure on
         </tr>
     </table>
     Eg:
+    
     ```
     cd scripts && ./configure.sh --machines ../conf/machine_list.txt --user arung --key ~/.ssh/id_rsa
     ```
@@ -72,6 +73,7 @@ We then study Bayesian structure learning, by learning the Bayesian structure on
         </tr>
     </table>
     Eg:
+    
     ```
     ./exec.sh --machines conf/machine_list.txt --user arung --key ~/.ssh/id_rsa --inp data/Sample_Data.csv --data /mydata
     ```
