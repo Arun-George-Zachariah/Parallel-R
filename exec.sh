@@ -63,11 +63,11 @@ i=0
 # Iterating over all the machines.
 for machine in $(cat ${MACHINES})
 do
-#  # Downloading the bnlearn package
-#  ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "wget ${BNLEARN_PACKAGE} -O ${DATA_DIR}/bnlearn_latest.tar.gz"
-#
-#  # Installing the bnlearn package.
-#  ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "R CMD INSTALL -l ${DATA_DIR} ${DATA_DIR}/bnlearn_latest.tar.gz"
+  # Downloading the bnlearn package
+  ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "wget ${BNLEARN_PACKAGE} -O ${DATA_DIR}/bnlearn_latest.tar.gz"
+
+  # Installing the bnlearn package.
+  ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "R CMD INSTALL -l ${DATA_DIR} ${DATA_DIR}/bnlearn_latest.tar.gz"
 
   # Copying the splits to the nodes.
   scp -o "StrictHostKeyChecking no" -i ${KEY} x${i} ${USER}@${machine}:${DATA_DIR}/data.csv

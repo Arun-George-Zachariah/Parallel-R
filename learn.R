@@ -32,7 +32,7 @@ models = parLapply(cl, seq(length(cl)), function(...) {
 # Obtaining the nodes from the header.
 nodes = unlist(strsplit(gsub("[\r\n]", "", args[4]), split=","))
 
-# # Averaging the networks
+# Averaging the networks
 strength = custom.strength(models, nodes)
 dag = averaged.network(strength)
 dag = cextend(dag)
