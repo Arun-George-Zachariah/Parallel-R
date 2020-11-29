@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Loading the input arguments.
-args = commandArgs(TRUE)
+args = commandArgs(trailingOnly=TRUE)
 
 # Loading the "parallel" package to enable parallel computation.
 library(parallel)

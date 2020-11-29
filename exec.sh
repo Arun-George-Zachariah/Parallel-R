@@ -55,7 +55,7 @@ done
 no_of_nodes=$(cat ${MACHINES} | wc -l)
 
 # Splitting the input data based on the no of nodes. (Note that, if the number of nodes is >=100, increment argument a)
-tail -n +2 ${INPUT} | split -da 1 -l $[ $(wc -l ${INPUT} | cut -d" " -f1) / ${no_of_nodes} ]  - --filter='sh -c "{ head -n1 '${INPUT}'; cat; } > $FILE"'
+tail -n +2 ${INPUT} | split -da 2 -l $[ $(wc -l ${INPUT} | cut -d" " -f1) / ${no_of_nodes} ]  - --filter='sh -c "{ head -n1 '${INPUT}'; cat; } > $FILE"'
 
 # Initialization of the file counter.
 i=0
@@ -63,14 +63,24 @@ i=0
 # Iterating over all the machines.
 for machine in $(cat ${MACHINES})
 do
-  # Downloading the bnlearn package
-  ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "wget ${BNLEARN_PACKAGE} -O ${DATA_DIR}/bnlearn_latest.tar.gz"
+  # Checking if bnlearn has been installed.
+  if [[ (! -d "${DATA_DIR}/bnlearn") ]]; then
 
-  # Installing the bnlearn package.
-  ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "R CMD INSTALL -l ${DATA_DIR} ${DATA_DIR}/bnlearn_latest.tar.gz"
+    # Downloading the bnlearn package
+    ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "wget ${BNLEARN_PACKAGE} -O ${DATA_DIR}/bnlearn_latest.tar.gz"
+
+    # Installing the bnlearn package.
+    ssh -o "StrictHostKeyChecking no" -i ${KEY} ${USER}@${machine} "R CMD INSTALL -l ${DATA_DIR} ${DATA_DIR}/bnlearn_latest.tar.gz"
+  fi
 
   # Copying the splits to the nodes.
-  scp -o "StrictHostKeyChecking no" -i ${KEY} x${i} ${USER}@${machine}:${DATA_DIR}/data.csv
+  if [ "$i" -lt "10" ]; then
+    scp -o "StrictHostKeyChecking no" -i ${KEY} x0${i} ${USER}@${machine}:${DATA_DIR}/data.csv
+  else
+    scp -o "StrictHostKeyChecking no" -i ${KEY} x${i} ${USER}@${machine}:${DATA_DIR}/data.csv
+  fi
+
+  # Incrementing i.
   i=$(( $i + 1 ))
 done
 
