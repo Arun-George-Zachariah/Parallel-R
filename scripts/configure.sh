@@ -10,7 +10,7 @@ SCRIPTS=(\
 
 # Input Defaults.
 MACHINES=conf/machine_list.txt
-USER="arung"
+USER=${USER}
 KEY=~/.ssh/id_rsa
 
 # Usage.

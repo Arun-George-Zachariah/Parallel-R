@@ -23,19 +23,36 @@ clusterExport(cl, "data_file")
 #Loading the "bnlearn" package onto the cluster nodes.
 invisible(clusterEvalQ(cl, library(bnlearn, lib.loc = lib_dir)))
 
-# Learning the network structure on each split.
-models = parLapply(cl, seq(length(cl)), function(...) {
-  data = read.csv(data_file, header = TRUE)
-  hc(data, score="k2")
-})
-
 # Obtaining the nodes from the header.
 nodes = unlist(strsplit(gsub("[\r\n]", "", args[4]), split=","))
 
-# Averaging the networks
-strength = custom.strength(models, nodes)
-dag = averaged.network(strength)
-dag = cextend(dag)
+# Creating an empty drag.
+currentDAG = empty.graph(nodes)
 
-# Printing the learnt structure
-dag
+# Expectation–maximization loop.
+while (TRUE) {
+
+  # Learning the network structure on each split.
+  models = parLapply(cl, seq(length(cl)), function(...) {
+    data = read.csv(data_file, header = TRUE)
+    hc(data, score="k2")
+  })
+
+  # Averaging the networks
+  strength = custom.strength(models, nodes)
+  newDAG = averaged.network(strength)
+  newDAG = cextend(newDAG)
+
+  # Printing the learnt structure
+  print(newDAG)
+
+  # Checking there was a change, in the network from the previous iteration.
+  if (isTRUE(all.equal(currentDAG, newDAG)))
+    break
+
+  # Setting the new DAG to the current DAG for the next iteration
+  currentDAG = newDAG
+}
+
+# Printing the final DAG.
+currentDAG

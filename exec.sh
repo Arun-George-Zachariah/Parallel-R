@@ -2,7 +2,7 @@
 
 # Input Defaults.
 MACHINES="conf/machine_list.txt"
-USER="arung"
+USER=${USER}
 KEY="~/.ssh/id_rsa"
 INPUT="data/Sample_Data.csv"
 DATA_DIR="/mydata"
